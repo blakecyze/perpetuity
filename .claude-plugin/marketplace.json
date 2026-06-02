@@ -1,0 +1,14 @@
+{
+  "name": "perpetuity",
+  "owner": {
+    "name": "Blake Cyze",
+    "url": "https://github.com/blakecyze"
+  },
+  "plugins": [
+    {
+      "name": "perpetuity",
+      "source": "./",
+      "description": "Cross-session memory for Claude. Recalls how hard problems got solved and captures new notes at task boundaries, so they don't get re-solved next month."
+    }
+  ]
+}

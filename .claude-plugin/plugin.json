@@ -1,0 +1,21 @@
+{
+  "name": "perpetuity",
+  "version": "0.1.0",
+  "description": "Cross-session memory for Claude. Recalls how hard problems got solved and captures new notes at task boundaries, so they don't get re-solved next month.",
+  "author": {
+    "name": "Blake Cyze",
+    "url": "https://cyze.dev"
+  },
+  "homepage": "https://github.com/blakecyze/perpetuity",
+  "repository": "https://github.com/blakecyze/perpetuity",
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "skills",
+    "memory",
+    "cross-session",
+    "recall",
+    "notes",
+    "agentskills"
+  ]
+}

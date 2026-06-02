@@ -35,27 +35,28 @@ Curate never deletes. Worst case, a note moves to `.archive/` and waits. It leav
 
 ## Install
 
-```sh
-git clone https://github.com/blakecyze/perpetuity ~/.claude/skills/perpetuity
+```
+/plugin marketplace add blakecyze/perpetuity
+/plugin install perpetuity
 ```
 
-The notes live apart from the skill, so uninstalling is just deleting directories:
+The notes live apart from the skill, so the plugin stays read-only and your memory survives updates. Uninstalling is just removing the plugin and deleting two directories:
 
 | Scope | Lives in |
 |---|---|
 | Global memory | `~/.claude/perpetuity/` |
 | Project memory | `.perpetuity/` inside the repo it belongs to |
 
-Delete those two directories and the skill folder and perpetuity is gone. No traces, no leftover config.
+Remove the plugin and delete those two directories and perpetuity is gone. No traces, no leftover config.
 
 ## What is in here
 
-| File | Purpose |
+| Path | Purpose |
 |---|---|
-| `SKILL.md` | the whole protocol: recall, capture, curate, the capture bar, the schema |
-| `notes/_example.md` | one filled-in note that shows the schema |
-| `INDEX.md` | the bounded index that is always loaded, built from note frontmatter |
-| `reindex.py` | a 30-line, stdlib-only script that rebuilds `INDEX.md` |
+| `skills/perpetuity/SKILL.md` | the whole protocol: recall, capture, curate, the capture bar, the schema |
+| `skills/perpetuity/notes/_example.md` | one filled-in note that shows the schema |
+| `skills/perpetuity/INDEX.md` | the bounded index that is always loaded, built from note frontmatter |
+| `skills/perpetuity/reindex.py` | a 30-line, stdlib-only script that rebuilds `INDEX.md` |
 | `docs/` | the design dossier, and the reasoning behind each choice |
 
 ## Safety
