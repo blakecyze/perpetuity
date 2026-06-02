@@ -1,8 +1,8 @@
 # perpetuity
 
-Claude forgets everything between sessions. perpetuity keeps the part worth keeping: how you solved the hard stuff. It's one small skill that follows the [agentskills.io](https://agentskills.io) standard, and it sits next to your other skills without fighting them for attention. Its job is memory. It stays well out of how your code gets written.
+Claude forgets everything between sessions. perpetuity keeps the part worth keeping: how you solved the hard stuff. It's one small skill on the [agentskills.io](https://agentskills.io) standard, sitting beside your other skills without fighting them for attention. Its job is memory, and it stays well out of how your code gets written.
 
-Here's the honest version of the word "passive". It costs you nothing, but it does not run while you sleep. A skill has no clock and no background thread. So perpetuity works at the seams of a conversation instead. It looks things up when a task begins, and it writes a note when one ends.
+Passive means something precise here: no clock, no background thread, nothing running while you sleep. A skill cannot do those things, so perpetuity works at the seams of a conversation instead. When a task begins, it searches its notes and loads only what matches. When the task ends, it writes one note back, and only if the task earned it. The third move, curate, you run by hand to stop the library turning to sludge. Recall, capture, curate: that is the whole of it.
 
 ## The loop
 
