@@ -33,7 +33,7 @@ def frontmatter(text):
 
 
 def main():
-    lines = ["# perpetuity INDEX  (generated — do not hand-edit; run reindex.py)", ""]
+    lines = ["# perpetuity INDEX  (generated; do not hand-edit, run reindex.py)", ""]
     notes = sorted(NOTES.glob("*.md"))
     for path in notes:
         f = frontmatter(path.read_text())
