@@ -1,7 +1,7 @@
 ---
 name: flutter-hot-reload-state-loss
 description: >-
-  Fix for Riverpod state vanishing on hot reload — use when avatar cosmetic
+  Fix for Riverpod state vanishing on hot reload. Use when avatar cosmetic
   state resets mid-edit in the Avatone shop UI.
 tags: [flutter, riverpod, avatone, hot-reload]
 created: 2026-06-01
@@ -26,7 +26,7 @@ losing the in-progress cosmetic selection.
 
 ## Pitfalls
 - A plain StateProvider survives reload but leaks across items.
-- Don't key by index — reorderable grid breaks it.
+- Don't key by index. A reorderable grid breaks it.
 
 ## Verification
-Edit a cosmetic, save, trigger hot reload — selection persists.
+Edit a cosmetic, save, trigger hot reload. The selection persists.
