@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>perpetuity · 01 — What Makes Hermes Tick</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,900&family=Hanken+Grotesk:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F3EEE3; --paper-2:#EDE6D6; --ink:#1C1A17; --ink-soft:#4A453D;
+    --line:#D8CEBB; --vermilion:#B5432E; --ochre:#9A7220; --jade:#3F6B53;
+    --shadow:0 1px 0 rgba(28,26,23,.04);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"Hanken Grotesk",sans-serif; font-size:18px; line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(rgba(28,26,23,.022) 1px,transparent 1px);
+    background-size:4px 4px;
+  }
+  .wrap{max-width:860px; margin:0 auto; padding:0 28px 120px;}
+  /* masthead */
+  header.mast{padding:64px 0 28px; border-bottom:1.5px solid var(--ink);}
+  .kicker{display:flex; align-items:center; gap:14px; font-family:"Spline Sans Mono",monospace;
+    font-size:12.5px; letter-spacing:.22em; text-transform:uppercase; color:var(--ink-soft);}
+  .seal{flex:0 0 auto;}
+  .doc-no{margin-left:auto; color:var(--vermilion); font-weight:500;}
+  h1{font-family:"Fraunces",serif; font-weight:600; font-size:clamp(40px,7vw,68px);
+    line-height:1.02; letter-spacing:-.015em; margin:22px 0 14px;}
+  h1 em{font-style:italic; color:var(--vermilion); font-weight:500;}
+  .standfirst{font-size:21px; color:var(--ink-soft); max-width:62ch; margin:0;
+    font-weight:400;}
+  .meta{margin-top:26px; display:flex; flex-wrap:wrap; gap:8px 26px;
+    font-family:"Spline Sans Mono",monospace; font-size:12.5px; color:var(--ink-soft);
+    letter-spacing:.02em;}
+  .meta b{color:var(--ink); font-weight:500;}
+  /* sections */
+  section{padding-top:54px;}
+  h2{font-family:"Fraunces",serif; font-weight:600; font-size:clamp(26px,4vw,36px);
+    letter-spacing:-.01em; line-height:1.1; margin:0 0 6px; display:flex; align-items:baseline; gap:14px;}
+  h2 .n{font-family:"Spline Sans Mono",monospace; font-size:15px; color:var(--vermilion);
+    font-weight:500; letter-spacing:0;}
+  h3{font-family:"Hanken Grotesk",sans-serif; font-weight:700; font-size:17px;
+    letter-spacing:.01em; margin:30px 0 4px; color:var(--ink);}
+  p{margin:14px 0;}
+  a{color:var(--vermilion); text-decoration:none; border-bottom:1px solid rgba(181,67,46,.3);}
+  a:hover{border-color:var(--vermilion);}
+  strong{font-weight:700;}
+  code{font-family:"Spline Sans Mono",monospace; font-size:.86em; background:var(--paper-2);
+    padding:1.5px 6px; border-radius:4px; border:1px solid var(--line);}
+  .lede-rule{width:46px; height:3px; background:var(--vermilion); margin:8px 0 22px;}
+  /* pillar cards */
+  .pillars{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:26px 0;}
+  .pillar{background:var(--paper-2); border:1px solid var(--line); border-radius:10px;
+    padding:18px 20px; box-shadow:var(--shadow);}
+  .pillar .tag{font-family:"Spline Sans Mono",monospace; font-size:11px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--vermilion);}
+  .pillar h4{font-family:"Fraunces",serif; font-weight:600; font-size:20px; margin:6px 0 6px;}
+  .pillar p{font-size:15px; margin:0; color:var(--ink-soft);}
+  /* callouts */
+  .note{border-left:3px solid var(--ochre); background:rgba(154,114,32,.07);
+    padding:14px 20px; border-radius:0 8px 8px 0; margin:24px 0; font-size:16.5px;}
+  .note .lbl{font-family:"Spline Sans Mono",monospace; font-size:11px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--ochre); display:block; margin-bottom:4px;}
+  .key{border-left:3px solid var(--vermilion); background:rgba(181,67,46,.06);
+    padding:14px 20px; border-radius:0 8px 8px 0; margin:24px 0; font-size:16.5px;}
+  .key .lbl{font-family:"Spline Sans Mono",monospace; font-size:11px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--vermilion); display:block; margin-bottom:4px;}
+  /* table */
+  table{width:100%; border-collapse:collapse; margin:22px 0; font-size:15px;}
+  th,td{text-align:left; padding:11px 12px; border-bottom:1px solid var(--line); vertical-align:top;}
+  th{font-family:"Spline Sans Mono",monospace; font-size:11px; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--ink-soft); font-weight:500;}
+  td code{font-size:13px;}
+  tr:last-child td{border-bottom:none;}
+  /* code block */
+  pre{background:#23201B; color:#E9E0CE; border-radius:10px; padding:18px 20px;
+    overflow-x:auto; font-family:"Spline Sans Mono",monospace; font-size:13.5px; line-height:1.55;
+    margin:22px 0;}
+  pre .c{color:#8E8676;} pre .k{color:#D88A6B;} pre .s{color:#9DB58A;}
+  ul.clean{list-style:none; padding:0; margin:18px 0;}
+  ul.clean li{padding:9px 0 9px 30px; position:relative; border-bottom:1px dashed var(--line);}
+  ul.clean li::before{content:"☤"; position:absolute; left:0; top:9px; color:var(--vermilion); font-size:15px;}
+  ul.clean li:last-child{border-bottom:none;}
+  .flow{display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin:20px 0; font-size:14px;
+    font-family:"Spline Sans Mono",monospace;}
+  .flow .step{background:var(--paper-2); border:1px solid var(--line); padding:7px 13px; border-radius:7px;}
+  .flow .arr{color:var(--vermilion);}
+  footer{margin-top:80px; padding-top:24px; border-top:1.5px solid var(--ink);
+    font-family:"Spline Sans Mono",monospace; font-size:12px; color:var(--ink-soft); line-height:1.7;}
+  footer a{color:var(--ink-soft);}
+  .ref{display:block; margin:2px 0;}
+  @media(max-width:640px){ .pillars{grid-template-columns:1fr;} body{font-size:17px;} .wrap{padding:0 20px 80px;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="mast">
+  <div class="kicker">
+    <svg class="seal" width="22" height="22" viewBox="0 0 40 40" fill="none">
+      <path d="M20 4 C30 4 36 11 36 20 C36 29 30 36 20 36 C12 36 6 30 6 21" stroke="#B5432E" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+    <span>perpetuity · research dossier</span>
+    <span class="doc-no">01 / 03</span>
+  </div>
+  <h1>What makes <em>Hermes</em> tick</h1>
+  <p class="standfirst">A teardown of the only widely-used agent with a built-in learning loop — and a sober read on which parts are genuinely novel versus good plumbing wearing a halo.</p>
+  <div class="meta">
+    <span><b>Subject</b> Nous Research · Hermes Agent v0.15.x</span>
+    <span><b>Compiled</b> 01 Jun 2026</span>
+    <span><b>For</b> the <i>perpetuity</i> skill</span>
+  </div>
+</header>
+
+<section id="frame">
+  <h2><span class="n">§0</span> The one-sentence frame</h2>
+  <div class="lede-rule"></div>
+  <p>Hermes is not a model and not a chatbot. It is an <strong>always-on runtime process</strong> — a Python program you install on a box (a $5 VPS, a homelab, a serverless backend) that wraps any LLM endpoint and runs continuously, reachable from a terminal or from Telegram/Discord/Slack. Everything people call "self-learning" hangs off the fact that it is a <em>process with disk and a clock</em>, not a single request/response turn.</p>
+  <p>That distinction is the whole story for us. Hold onto it — it is exactly the thing a Claude skill does <em>not</em> have, and Document 02 is about how far we can get without it.</p>
+  <div class="key">
+    <span class="lbl">The load-bearing fact</span>
+    Hermes learns because it is a long-lived process that can wake itself up while idle. Strip away the runtime and you are left with a set of <strong>protocols for what to write to disk and when</strong> — which, encouragingly, is portable.
+  </div>
+</section>
+
+<section id="loop">
+  <h2><span class="n">§1</span> The closed learning loop</h2>
+  <div class="lede-rule"></div>
+  <p>Nous describes a "closed loop" with four moving parts. They are independent mechanisms wired together, not one clever trick. Understanding them separately is what lets us cherry-pick.</p>
+  <div class="pillars">
+    <div class="pillar">
+      <span class="tag">create</span>
+      <h4>Self-improvement loop</h4>
+      <p>After a hard task, the agent writes a reusable skill describing how it solved it. Procedural memory, authored by the agent via the <code>skill_manage</code> tool.</p>
+    </div>
+    <div class="pillar">
+      <span class="tag">maintain</span>
+      <h4>The Curator</h4>
+      <p>A background pass that ages, consolidates and archives agent-written skills so the library doesn't rot into near-duplicates.</p>
+    </div>
+    <div class="pillar">
+      <span class="tag">remember</span>
+      <h4>Persistent memory</h4>
+      <p>Two tiny, bounded files (<code>MEMORY.md</code>, <code>USER.md</code>) injected into the system prompt at session start. Hard character caps force curation.</p>
+    </div>
+    <div class="pillar">
+      <span class="tag">recall</span>
+      <h4>Session search</h4>
+      <p>Every past conversation in SQLite with full-text search. Cheap, instant, no LLM call — the agent greps its own history.</p>
+    </div>
+  </div>
+  <p>A fifth limb sits slightly outside: <strong>Honcho</strong>, an optional external "dialectic user-modelling" provider that builds a deepening model of <em>who you are</em> across sessions. It is one of eight pluggable memory backends, not core, and we treat it as out-of-scope for v1.</p>
+</section>
+
+<section id="skills">
+  <h2><span class="n">§2</span> Self-authored skills — the actual engine</h2>
+  <div class="lede-rule"></div>
+  <p>This is the part everyone means by "it self-learns," and it is the most directly stealable. The agent has a tool, <code>skill_manage</code>, with the actions you'd expect: <code>create</code>, <code>patch</code> (preferred — token-cheap), <code>edit</code>, <code>delete</code>, plus file add/remove for multi-file skills. A skill is just a <code>SKILL.md</code> with YAML frontmatter, living under <code>~/.hermes/skills/</code>, conforming to the <a href="https://agentskills.io">agentskills.io</a> open standard — the <em>same</em> standard Claude's own skills use.</p>
+
+  <h3>When it decides to write one</h3>
+  <p>The trigger conditions are explicit in the docs, and they are sensible heuristics rather than magic:</p>
+  <ul class="clean">
+    <li>It completed a <strong>complex task (5+ tool calls)</strong> successfully.</li>
+    <li>It hit errors or dead ends and <strong>found the working path</strong>.</li>
+    <li>The <strong>user corrected its approach</strong>.</li>
+    <li>It discovered a <strong>non-trivial workflow</strong> worth not re-deriving.</li>
+  </ul>
+  <p>Note what these have in common: each is a moment where <em>effort was spent that would otherwise be lost at the end of the turn</em>. That is the real definition of "worth remembering," and we lift it wholesale in Document 02.</p>
+
+  <h3>Progressive disclosure keeps it cheap</h3>
+  <p>Skills load in three tiers so a growing library doesn't bloat the context:</p>
+  <div class="flow">
+    <span class="step">L0 · list (name+desc, ~3k tok)</span><span class="arr">→</span>
+    <span class="step">L1 · full SKILL.md on demand</span><span class="arr">→</span>
+    <span class="step">L2 · reference files only if needed</span>
+  </div>
+  <p>Only the lightweight index is ever "always on." This three-tier pattern is identical to how Claude's skills work, which is convenient — it means a <em>perpetuity</em> note library inherits the same token discipline for free.</p>
+</section>
+
+<section id="curator">
+  <h2><span class="n">§3</span> The Curator — and the detail that changes everything</h2>
+  <div class="lede-rule"></div>
+  <p>Left alone, an agent that writes a skill after every hard task accumulates "dozens of narrow near-duplicates that pollute the catalog and waste tokens." The Curator exists to stop that. It is, in effect, a <strong>garbage collector for learned knowledge</strong>, and it is the single most important mechanism to copy — because the failure mode it prevents is the one most likely to sink <em>perpetuity</em>.</p>
+
+  <h3>What it does</h3>
+  <p>Two phases per run. First, <strong>deterministic ageing</strong> with no LLM involved: a skill unused for 30 days becomes <code>stale</code>; unused for 90 days it is moved to <code>.archive/</code>. Second, an <strong>LLM review</strong> — a single auxiliary-model pass (capped at 8 iterations, and you can pin it to a cheap model like a Flash) that surveys the agent-written skills and decides per-skill: keep, patch drift, consolidate overlapping ones, or archive.</p>
+  <p>It only ever touches <em>agent-created</em> skills — never bundled or hub-installed ones. It <strong>never deletes</strong>; the worst it does is archive into a recoverable folder. It takes a tar.gz snapshot before every real pass, supports one-command rollback, writes a human-readable <code>REPORT.md</code> per run, and lets you <code>pin</code> a skill to fence it off entirely.</p>
+
+  <div class="key">
+    <span class="lbl">The detail that reframes "background"</span>
+    The Curator is <strong>triggered by an inactivity check, not a cron daemon</strong>. On CLI session start, and on the gateway's recurring tick, Hermes asks: has <code>interval_hours</code> (default 7 days) passed <em>and</em> has the agent been idle for <code>min_idle_hours</code> (default 2h)? Only then does it fork. Even Hermes' "background learning" is really <em>event-triggered work at quiet moments</em> — not a thread humming away on its own.
+  </div>
+  <p>This is enormously freeing for our design. The "passive background learning" Hermes advertises is, mechanically, <em>"do maintenance at the next convenient boundary."</em> A Claude skill cannot run a daemon — but it absolutely can act at boundaries (session start, task end, an explicit tick). We are closer to Hermes than the marketing implies.</p>
+</section>
+
+<section id="memory">
+  <h2><span class="n">§4</span> Memory: bounded on purpose</h2>
+  <div class="lede-rule"></div>
+  <p>The instinct with memory is "store everything." Hermes does the opposite, and it's the more sophisticated choice. Two files, both with hard caps:</p>
+  <table>
+    <thead><tr><th>File</th><th>Holds</th><th>Cap</th></tr></thead>
+    <tbody>
+      <tr><td><code>MEMORY.md</code></td><td>Agent's own notes — environment facts, conventions, lessons learned</td><td>~2,200 chars (~800 tok)</td></tr>
+      <tr><td><code>USER.md</code></td><td>User profile — preferences, comms style, expectations</td><td>~1,375 chars (~500 tok)</td></tr>
+    </tbody>
+  </table>
+  <p>They're injected into the system prompt as a <strong>frozen snapshot at session start</strong> — captured once, never mutated mid-session, deliberately, to preserve the model's prefix cache. Writes hit disk immediately but only surface next session. The agent edits via a <code>memory</code> tool (<code>add</code>/<code>replace</code>/<code>remove</code>, substring matching, notably <em>no read action</em> — it just sees memory in its prompt).</p>
+  <p>When a file hits its cap, the agent must <strong>consolidate before adding</strong> — merge three "project uses X" notes into one dense entry. The cap isn't a limitation; it's a forcing function for curation. Compare this to <strong>session search</strong>, which is the opposite tier: unlimited, on SQLite FTS5, ~20ms, <em>free</em> (no LLM), used for "did we discuss X three weeks ago?" The split is the lesson:</p>
+  <div class="note">
+    <span class="lbl">Design principle to steal</span>
+    Keep a <strong>tiny, always-loaded index</strong> (bounded, curated, expensive-per-token so kept small) sitting on top of an <strong>unlimited, searched-on-demand archive</strong> (cheap, never in context until matched). Memory ≠ storage; memory is the bounded hot layer.
+  </div>
+</section>
+
+<section id="verdict">
+  <h2><span class="n">§5</span> What's actually novel — an honest read</h2>
+  <div class="lede-rule"></div>
+  <p>Stripped of the "self-evolving" framing, every individual mechanism is mundane in the best way: bounded buffers, a deterministic state machine (<code>active → stale → archived</code>), event-triggered forks at idle, FTS over a SQLite table, recoverable archives, snapshots before mutation. None of it is a research breakthrough. A senior engineer would recognise all of it.</p>
+  <p><strong>The novelty is the integration.</strong> Hermes is the first widely-adopted system to wire a complete capture → maintain → recall loop into an always-on agent runtime and ship it with the safety rails (never-delete, snapshot, pin, dry-run) that make self-modification tolerable in production. The achievement is product and discipline, not algorithm.</p>
+  <p>And it is genuinely double-edged — which is the part the launch posts skip:</p>
+  <ul class="clean">
+    <li><strong>Drift / entrenchment.</strong> A skill written from one fluky success becomes a confident instruction the agent re-applies. Self-authored knowledge can encode a <em>wrong</em> lesson as durably as a right one.</li>
+    <li><strong>Proliferation.</strong> Capture-after-every-hard-task is a recipe for near-duplicate sprawl. The Curator isn't a nicety — it's load-bearing, and it's an LLM pass that costs tokens and can itself mis-consolidate.</li>
+    <li><strong>Legibility.</strong> A library the agent rewrites is one where you have less visibility into <em>why</em> it now behaves a certain way. Kanso's manual, version-controlled approach is the opposite trade-off: more effort, full audit trail.</li>
+  </ul>
+  <div class="key">
+    <span class="lbl">Carry-forward for perpetuity</span>
+    Copy the loop, but treat the <strong>maintenance pass and the safety rails as mandatory, not optional</strong>. The capture mechanism is the easy 20%; the curation, decay, provenance and rollback are the 80% that decide whether the thing helps or quietly poisons your workflow.
+  </div>
+</section>
+
+<footer>
+  <span class="ref">— Primary sources (paraphrased throughout; no verbatim reproduction):</span>
+  <span class="ref">· github.com/NousResearch/hermes-agent — README</span>
+  <span class="ref">· hermes-agent.nousresearch.com/docs — Skills System, Curator, Persistent Memory</span>
+  <span class="ref">· agentskills.io — open skill standard</span>
+  <span class="ref" style="margin-top:10px;">perpetuity dossier · 01 of 03 · compiled for Blake · 01 Jun 2026</span>
+</footer>
+
+</div>
+</body>
+</html>

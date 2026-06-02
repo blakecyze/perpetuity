@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>perpetuity · 03 — Storing the Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,900&family=Hanken+Grotesk:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F3EEE3; --paper-2:#EDE6D6; --ink:#1C1A17; --ink-soft:#4A453D;
+    --line:#D8CEBB; --vermilion:#B5432E; --ochre:#9A7220; --jade:#3F6B53;
+    --shadow:0 1px 0 rgba(28,26,23,.04);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0; background:var(--paper); color:var(--ink);
+    font-family:"Hanken Grotesk",sans-serif; font-size:18px; line-height:1.62; -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(rgba(28,26,23,.022) 1px,transparent 1px); background-size:4px 4px;}
+  .wrap{max-width:860px; margin:0 auto; padding:0 28px 120px;}
+  header.mast{padding:64px 0 28px; border-bottom:1.5px solid var(--ink);}
+  .kicker{display:flex; align-items:center; gap:14px; font-family:"Spline Sans Mono",monospace;
+    font-size:12.5px; letter-spacing:.22em; text-transform:uppercase; color:var(--ink-soft);}
+  .doc-no{margin-left:auto; color:var(--vermilion); font-weight:500;}
+  h1{font-family:"Fraunces",serif; font-weight:600; font-size:clamp(40px,7vw,68px);
+    line-height:1.02; letter-spacing:-.015em; margin:22px 0 14px;}
+  h1 em{font-style:italic; color:var(--vermilion); font-weight:500;}
+  .standfirst{font-size:21px; color:var(--ink-soft); max-width:62ch; margin:0; font-weight:400;}
+  .meta{margin-top:26px; display:flex; flex-wrap:wrap; gap:8px 26px;
+    font-family:"Spline Sans Mono",monospace; font-size:12.5px; color:var(--ink-soft); letter-spacing:.02em;}
+  .meta b{color:var(--ink); font-weight:500;}
+  section{padding-top:54px;}
+  h2{font-family:"Fraunces",serif; font-weight:600; font-size:clamp(26px,4vw,36px);
+    letter-spacing:-.01em; line-height:1.1; margin:0 0 6px; display:flex; align-items:baseline; gap:14px;}
+  h2 .n{font-family:"Spline Sans Mono",monospace; font-size:15px; color:var(--vermilion); font-weight:500; letter-spacing:0;}
+  h3{font-family:"Hanken Grotesk",sans-serif; font-weight:700; font-size:17px; letter-spacing:.01em; margin:30px 0 4px;}
+  p{margin:14px 0;}
+  a{color:var(--vermilion); text-decoration:none; border-bottom:1px solid rgba(181,67,46,.3);}
+  a:hover{border-color:var(--vermilion);}
+  code{font-family:"Spline Sans Mono",monospace; font-size:.86em; background:var(--paper-2);
+    padding:1.5px 6px; border-radius:4px; border:1px solid var(--line);}
+  .lede-rule{width:46px; height:3px; background:var(--vermilion); margin:8px 0 22px;}
+  .key{border-left:3px solid var(--vermilion); background:rgba(181,67,46,.06);
+    padding:14px 20px; border-radius:0 8px 8px 0; margin:24px 0; font-size:16.5px;}
+  .key .lbl{font-family:"Spline Sans Mono",monospace; font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--vermilion); display:block; margin-bottom:4px;}
+  .note{border-left:3px solid var(--ochre); background:rgba(154,114,32,.07);
+    padding:14px 20px; border-radius:0 8px 8px 0; margin:24px 0; font-size:16.5px;}
+  .note .lbl{font-family:"Spline Sans Mono",monospace; font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--ochre); display:block; margin-bottom:4px;}
+  table{width:100%; border-collapse:collapse; margin:22px 0; font-size:15px;}
+  th,td{text-align:left; padding:11px 12px; border-bottom:1px solid var(--line); vertical-align:top;}
+  th{font-family:"Spline Sans Mono",monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft); font-weight:500;}
+  td code{font-size:13px;}
+  tr:last-child td{border-bottom:none;}
+  pre{background:#23201B; color:#E9E0CE; border-radius:10px; padding:18px 20px; overflow-x:auto;
+    font-family:"Spline Sans Mono",monospace; font-size:13px; line-height:1.6; margin:22px 0;}
+  pre .c{color:#8E8676;} pre .k{color:#D88A6B;} pre .s{color:#9DB58A; } pre .v{color:#C7B27A;}
+  /* the big number stat row */
+  .stats{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:26px 0;}
+  .stat{background:var(--paper-2); border:1px solid var(--line); border-radius:10px; padding:18px; text-align:center; box-shadow:var(--shadow);}
+  .stat .big{font-family:"Fraunces",serif; font-weight:600; font-size:38px; color:var(--vermilion); line-height:1;}
+  .stat .cap{font-family:"Spline Sans Mono",monospace; font-size:11px; letter-spacing:.06em; color:var(--ink-soft); margin-top:8px; text-transform:uppercase;}
+  /* verdict scale */
+  .scale{display:flex; border:1px solid var(--line); border-radius:10px; overflow:hidden; margin:22px 0; font-size:14px;}
+  .scale > div{padding:14px 16px;}
+  .scale .md{background:rgba(63,107,83,.12); flex:1.4;}
+  .scale .html{background:rgba(181,67,46,.08); flex:1;}
+  .scale .lab{font-family:"Spline Sans Mono",monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; display:block; margin-bottom:4px; font-weight:500;}
+  .scale .md .lab{color:var(--jade);} .scale .html .lab{color:var(--vermilion);}
+  footer{margin-top:80px; padding-top:24px; border-top:1.5px solid var(--ink);
+    font-family:"Spline Sans Mono",monospace; font-size:12px; color:var(--ink-soft); line-height:1.7;}
+  .ref{display:block; margin:2px 0;}
+  @media(max-width:640px){ body{font-size:17px;} .wrap{padding:0 20px 80px;} .stats{grid-template-columns:1fr;} .scale{flex-direction:column;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="mast">
+  <div class="kicker">
+    <svg width="22" height="22" viewBox="0 0 40 40" fill="none">
+      <path d="M20 4 C30 4 36 11 36 20 C36 29 30 36 20 36 C12 36 6 30 6 21" stroke="#B5432E" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+    <span>perpetuity · research dossier</span>
+    <span class="doc-no">03 / 03</span>
+  </div>
+  <h1>How to <em>store</em> the learned notes</h1>
+  <p class="standfirst">You asked whether to use HTML instead of Markdown for the notes. The honest answer splits in two — and for the part that matters here, your hunch points the wrong way. Here's the evidence and the schema.</p>
+  <div class="meta">
+    <span><b>Question</b> .md vs .html for the library</span>
+    <span><b>Verdict</b> Markdown notes · HTML review view</span>
+    <span><b>Compiled</b> 01 Jun 2026</span>
+  </div>
+</header>
+
+<section id="two">
+  <h2><span class="n">§0</span> Two artefacts, not one</h2>
+  <div class="lede-rule"></div>
+  <p>The confusion dissolves the moment you separate the two things in play, because they have opposite readers:</p>
+  <table>
+    <thead><tr><th>Artefact</th><th>Written by</th><th>Read by</th><th>Lives in</th></tr></thead>
+    <tbody>
+      <tr><td><strong>These three reports</strong></td><td>Claude, once</td><td>You — navigate, skim, act</td><td>your browser</td></tr>
+      <tr><td><strong>The learned notes</strong></td><td>Claude, repeatedly</td><td>Claude — searched, loaded, patched</td><td>the agent loop</td></tr>
+    </tbody>
+  </table>
+  <p>The reports you're reading <em>are</em> HTML, and rightly so — that's the human-facing case where rich layout earns its cost. The learned notes are the exact opposite: a machine writes them, the same machine reads and rewrites them, a human rarely looks. That difference decides the format, and the current evidence is unusually clear about it.</p>
+</section>
+
+<section id="evidence">
+  <h2><span class="n">§1</span> The case for Markdown (for the notes)</h2>
+  <div class="lede-rule"></div>
+  <p>Everything that lives inside an agent loop pays a per-token tax on every read. HTML's tags, attributes, and wrappers are pure overhead the model must parse without semantic payoff. The 2026 benchmarks are consistent:</p>
+  <div class="stats">
+    <div class="stat"><div class="big">~3×</div><div class="cap">tokens, HTML vs clean MD, same content</div></div>
+    <div class="stat"><div class="big">20–40%</div><div class="cap">typical token cut converting HTML → MD</div></div>
+    <div class="stat"><div class="big">+35%</div><div class="cap">reported RAG retrieval accuracy on clean MD</div></div>
+  </div>
+  <p>On real-world pages the gap widens to roughly 68–87% fewer tokens. Beyond cost, structured Markdown measurably improves extraction and reduces hallucination versus verbose HTML — less markup noise means the model spends fewer cycles inferring structure and more synthesising. And the practical clinchers for a note library specifically:</p>
+  <ul style="list-style:none; padding:0;">
+    <li style="padding:8px 0; border-bottom:1px dashed var(--line);"><strong>Diff-friendly.</strong> Notes get rewritten and consolidated constantly. MD diffs are clean; HTML diffs are noise — closing tags and attribute churn obscuring the real change. For a git-tracked library this alone is decisive.</li>
+    <li style="padding:8px 0; border-bottom:1px dashed var(--line);"><strong>It's the native skill format.</strong> agentskills.io and Claude's own skills are <code>SKILL.md</code>. Notes in Markdown <em>are</em> skills — portable, hub-shareable, parsed best by the models trained on oceans of it.</li>
+    <li style="padding:8px 0;"><strong>Indexable.</strong> FTS and grep work cleanly over prose; chunking is predictable. Hermes stores sessions as plain text in SQLite for exactly this reason.</li>
+  </ul>
+</section>
+
+<section id="thariq">
+  <h2><span class="n">§2</span> The HTML counter-argument — and why it doesn't apply here</h2>
+  <div class="lede-rule"></div>
+  <p>Your hunch isn't from nowhere. In May 2026 Thariq Shihipar (Claude Code team, Anthropic) published <em>"HTML is the new Markdown,"</em> and it spread fast — Karpathy and Simon Willison both engaged. In one widely-repeated test, HTML beat Markdown in <strong>17 of 20</strong> head-to-head tasks. So why am I still saying Markdown?</p>
+  <p>Because of <em>which</em> 17. Every HTML win was a <strong>human-facing deliverable</strong>: status reports, code reviews, diagnostic summaries, data comparisons — things a person reads, navigates, and acts on, where collapsible sections, colour-coded status and tabbed layouts genuinely help. And the 3 cases Markdown held?</p>
+  <div class="key">
+    <span class="lbl">The exact carve-out that decides our question</span>
+    The three tasks Markdown won were the ones where <strong>"the output stays internal to an agent's loop and never reaches a human."</strong> That is the textbook description of a perpetuity note. Thariq's own operational rule: <em>HTML when a third party reads but won't modify it; Markdown when the document is collaborative, indexed, or consumed by an automatic pipeline.</em> Learned notes are all three of the latter.
+  </div>
+  <p>So the debate doesn't contradict the recommendation — it confirms it. The HTML thesis is a recalibration for <em>human-facing agent output</em>, and the reports in this dossier obey it. It explicitly carves out the agent-loop case, which is where the notes live.</p>
+</section>
+
+<section id="verdict">
+  <h2><span class="n">§3</span> Verdict</h2>
+  <div class="lede-rule"></div>
+  <div class="scale">
+    <div class="md"><span class="lab">Markdown · source of truth</span> The notes themselves, the <code>INDEX</code>, anything Claude reads, searches, patches, or commits to git. Non-negotiable.</div>
+    <div class="html"><span class="lab">HTML · on demand</span> A generated browse / review surface for when <em>you</em> audit the library. Human-facing, so HTML earns its keep — but generated <em>from</em> the MD, never the store.</div>
+  </div>
+  <p>Store in Markdown. Don't store in HTML. The only place HTML belongs in perpetuity is the optional review view in §4 — and even that is derived, never the system of record.</p>
+</section>
+
+<section id="hybrid">
+  <h2><span class="n">§4</span> The hybrid — honouring the hunch</h2>
+  <div class="lede-rule"></div>
+  <p>There <em>is</em> a real role for HTML here, just not as storage. A note library you can't see is one you won't trust or prune — and Document 02 made human review a safety rail. So: keep Markdown as the single source of truth, and let perpetuity <strong>generate an HTML dashboard on demand</strong> (<code>/perpetuity-review</code>) from the notes' frontmatter.</p>
+  <p>That review view is exactly Thariq's sweet spot — a human-facing deliverable — so it should be rich: cards per note, filter by tag/state, colour-coded confidence, "stale" and "superseded" badges, sorted by last-used. You get cheap, legible, diff-friendly storage <em>and</em> a genuinely nice audit surface, each format doing the job it's good at. This mirrors the living-HTML-dashboard pattern from the same Thariq talk, pointed at your own memory instead of a design system.</p>
+  <div class="note">
+    <span class="lbl">Rule of thumb</span>
+    Markdown is the database; HTML is a report you run against it. Never let the report become the database.
+  </div>
+</section>
+
+<section id="schema">
+  <h2><span class="n">§5</span> The note schema</h2>
+  <div class="lede-rule"></div>
+  <p>One Markdown file per note, <code>SKILL.md</code>-compatible so notes double as installable skills. YAML frontmatter carries the machine-readable metadata (the bit that powers recall, decay, and the HTML view); the body follows the Hermes <em>When / Procedure / Pitfalls / Verification</em> shape, which also happens to match your kanso house style.</p>
+<pre><span class="c"># ~/.claude/perpetuity/notes/flutter-hot-reload-state-loss.md</span>
+<span class="k">---</span>
+<span class="k">name:</span> <span class="v">flutter-hot-reload-state-loss</span>
+<span class="k">description:</span> <span class="v">Fix for Riverpod state vanishing on hot reload — use</span>
+  <span class="v">when avatar cosmetic state resets mid-edit in the Avatone shop UI.</span>
+<span class="k">tags:</span> <span class="v">[flutter, riverpod, avatone, hot-reload]</span>
+<span class="k">created:</span> <span class="v">2026-06-01</span>
+<span class="k">source_task:</span> <span class="v">"debugging cosmetic preview resetting on save"</span>
+<span class="k">confidence:</span> <span class="v">high          # high | medium | tentative</span>
+<span class="k">state:</span> <span class="v">active             # active | stale | archived</span>
+<span class="k">use_count:</span> <span class="v">0</span>
+<span class="k">last_used:</span> <span class="v">2026-06-01</span>
+<span class="k">supersedes:</span> <span class="v">null          # name of a note this replaces, if any</span>
+<span class="k">pinned:</span> <span class="v">false</span>
+<span class="k">origin:</span> <span class="v">agent-created     # never let curate touch hand-authored</span>
+<span class="k">---</span>
+
+<span class="k">## When to use</span>
+Riverpod providers holding ephemeral UI state reset on hot reload,
+losing the in-progress cosmetic selection.
+
+<span class="k">## Procedure</span>
+1. Move the selection into an <span class="v">autoDispose</span> provider keyed by item id.
+2. Persist the draft to the <span class="v">cosmetic_draft</span> box before rebuild.
+3. Rehydrate in <span class="v">build()</span> from the box, not from a field.
+
+<span class="k">## Pitfalls</span>
+- A plain StateProvider survives reload but leaks across items.
+- Don't key by index — reorderable grid breaks it.
+
+<span class="k">## Verification</span>
+Edit a cosmetic, save, trigger hot reload — selection persists.</pre>
+  <p>The frontmatter is the entire engine: <code>description</code> drives recall matching, <code>tags</code> drive search, <code>state</code>/<code>last_used</code> drive decay, <code>confidence</code>/<code>supersedes</code> are the anti-entrenchment rails, <code>origin</code> protects your hand-written work from the consolidation pass.</p>
+</section>
+
+<section id="index">
+  <h2><span class="n">§6</span> The index — the always-loaded layer</h2>
+  <div class="lede-rule"></div>
+  <p>Mirroring Hermes' bounded <code>MEMORY.md</code> and the L0 skills list (~3k tokens), only a thin index is ever loaded by default. Full notes load on match. Generate it from frontmatter so it never drifts:</p>
+<pre><span class="c"># ~/.claude/perpetuity/INDEX.md  (generated — do not hand-edit)</span>
+<span class="k">- name:</span> <span class="v">flutter-hot-reload-state-loss</span>
+  <span class="k">desc:</span> <span class="v">Riverpod state vanishing on hot reload (Avatone shop)</span>
+  <span class="k">tags:</span> <span class="v">[flutter, riverpod, avatone]  state: active  conf: high</span>
+<span class="k">- name:</span> <span class="v">cra-gst-payment-matching</span>
+  <span class="k">desc:</span> <span class="v">CRA payment not matching a GST34 return</span>
+  <span class="k">tags:</span> <span class="v">[tax, cra, sole-prop]        state: active  conf: medium</span></pre>
+  <p>Keep the index hard-capped like Hermes caps memory — a forcing function for consolidation. When it grows past budget, that's the signal for a curate pass, not a bigger budget. The <code>use_count</code>/<code>last_used</code> counters double as the <code>.usage.json</code>-style telemetry that the decay state machine and the HTML review view both read.</p>
+  <div class="key">
+    <span class="lbl">One-line answer to the brief</span>
+    Markdown for every note and index (agent-loop, indexed, diff-tracked, skill-compatible); HTML only for the on-demand human review dashboard. Your instinct to use HTML was right — but for the reports, not the memory.
+  </div>
+</section>
+
+<footer>
+  <span class="ref">— Sources (paraphrased; no verbatim reproduction):</span>
+  <span class="ref">· Token benchmarks: web2md.org, releasepad.io, leadmagic.io, searchcans.com (Jan–Feb 2026)</span>
+  <span class="ref">· "HTML is the new Markdown" — T. Shihipar / Claude Code; analysis via theitsolutionist.com, beam.ai, pasqualepillitteri.it (May 2026)</span>
+  <span class="ref">· Note shape adapted from Hermes SKILL.md (When / Procedure / Pitfalls / Verification)</span>
+  <span class="ref" style="margin-top:10px;">perpetuity dossier · 03 of 03 · compiled for Blake · 01 Jun 2026</span>
+</footer>
+
+</div>
+</body>
+</html>

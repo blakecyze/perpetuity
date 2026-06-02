@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>perpetuity · 02 — A Passive Skill</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,900&family=Hanken+Grotesk:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F3EEE3; --paper-2:#EDE6D6; --ink:#1C1A17; --ink-soft:#4A453D;
+    --line:#D8CEBB; --vermilion:#B5432E; --ochre:#9A7220; --jade:#3F6B53;
+    --shadow:0 1px 0 rgba(28,26,23,.04);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0; background:var(--paper); color:var(--ink);
+    font-family:"Hanken Grotesk",sans-serif; font-size:18px; line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(rgba(28,26,23,.022) 1px,transparent 1px); background-size:4px 4px;}
+  .wrap{max-width:860px; margin:0 auto; padding:0 28px 120px;}
+  header.mast{padding:64px 0 28px; border-bottom:1.5px solid var(--ink);}
+  .kicker{display:flex; align-items:center; gap:14px; font-family:"Spline Sans Mono",monospace;
+    font-size:12.5px; letter-spacing:.22em; text-transform:uppercase; color:var(--ink-soft);}
+  .doc-no{margin-left:auto; color:var(--vermilion); font-weight:500;}
+  h1{font-family:"Fraunces",serif; font-weight:600; font-size:clamp(40px,7vw,68px);
+    line-height:1.02; letter-spacing:-.015em; margin:22px 0 14px;}
+  h1 em{font-style:italic; color:var(--vermilion); font-weight:500;}
+  .standfirst{font-size:21px; color:var(--ink-soft); max-width:62ch; margin:0; font-weight:400;}
+  .meta{margin-top:26px; display:flex; flex-wrap:wrap; gap:8px 26px;
+    font-family:"Spline Sans Mono",monospace; font-size:12.5px; color:var(--ink-soft); letter-spacing:.02em;}
+  .meta b{color:var(--ink); font-weight:500;}
+  section{padding-top:54px;}
+  h2{font-family:"Fraunces",serif; font-weight:600; font-size:clamp(26px,4vw,36px);
+    letter-spacing:-.01em; line-height:1.1; margin:0 0 6px; display:flex; align-items:baseline; gap:14px;}
+  h2 .n{font-family:"Spline Sans Mono",monospace; font-size:15px; color:var(--vermilion); font-weight:500; letter-spacing:0;}
+  h3{font-family:"Hanken Grotesk",sans-serif; font-weight:700; font-size:17px; letter-spacing:.01em; margin:30px 0 4px;}
+  p{margin:14px 0;}
+  a{color:var(--vermilion); text-decoration:none; border-bottom:1px solid rgba(181,67,46,.3);}
+  a:hover{border-color:var(--vermilion);}
+  code{font-family:"Spline Sans Mono",monospace; font-size:.86em; background:var(--paper-2);
+    padding:1.5px 6px; border-radius:4px; border:1px solid var(--line);}
+  .lede-rule{width:46px; height:3px; background:var(--vermilion); margin:8px 0 22px;}
+  .key{border-left:3px solid var(--vermilion); background:rgba(181,67,46,.06);
+    padding:14px 20px; border-radius:0 8px 8px 0; margin:24px 0; font-size:16.5px;}
+  .key .lbl{font-family:"Spline Sans Mono",monospace; font-size:11px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--vermilion); display:block; margin-bottom:4px;}
+  .note{border-left:3px solid var(--ochre); background:rgba(154,114,32,.07);
+    padding:14px 20px; border-radius:0 8px 8px 0; margin:24px 0; font-size:16.5px;}
+  .note .lbl{font-family:"Spline Sans Mono",monospace; font-size:11px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--ochre); display:block; margin-bottom:4px;}
+  table{width:100%; border-collapse:collapse; margin:22px 0; font-size:15px;}
+  th,td{text-align:left; padding:11px 12px; border-bottom:1px solid var(--line); vertical-align:top;}
+  th{font-family:"Spline Sans Mono",monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft); font-weight:500;}
+  td code{font-size:13px;}
+  tr:last-child td{border-bottom:none;}
+  pre{background:#23201B; color:#E9E0CE; border-radius:10px; padding:18px 20px; overflow-x:auto;
+    font-family:"Spline Sans Mono",monospace; font-size:13px; line-height:1.6; margin:22px 0;}
+  pre .c{color:#8E8676;} pre .k{color:#D88A6B;} pre .s{color:#9DB58A;}
+  ul.clean{list-style:none; padding:0; margin:18px 0;}
+  ul.clean li{padding:9px 0 9px 30px; position:relative; border-bottom:1px dashed var(--line);}
+  ul.clean li::before{content:"○"; position:absolute; left:2px; top:9px; color:var(--vermilion); font-size:13px;}
+  ul.clean li:last-child{border-bottom:none;}
+  ul.skip li::before{content:"×"; color:var(--ink-soft);}
+  /* tier cards */
+  .tier{border:1px solid var(--line); border-radius:12px; padding:22px 24px; margin:18px 0; background:var(--paper-2); box-shadow:var(--shadow);}
+  .tier .head{display:flex; align-items:center; gap:12px; margin-bottom:4px;}
+  .tier .badge{font-family:"Spline Sans Mono",monospace; font-size:11px; font-weight:500; letter-spacing:.12em;
+    text-transform:uppercase; padding:4px 9px; border-radius:20px;}
+  .t1 .badge{background:rgba(63,107,83,.14); color:var(--jade);}
+  .t2 .badge{background:rgba(154,114,32,.16); color:var(--ochre);}
+  .t3 .badge{background:rgba(181,67,46,.12); color:var(--vermilion);}
+  .tier h4{font-family:"Fraunces",serif; font-weight:600; font-size:22px; margin:0;}
+  .tier .sub{font-family:"Spline Sans Mono",monospace; font-size:12px; color:var(--ink-soft); margin:2px 0 12px;}
+  .tier p{font-size:15.5px; margin:10px 0;}
+  .flow{display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:16px 0; font-size:13px;
+    font-family:"Spline Sans Mono",monospace;}
+  .flow .step{background:var(--paper); border:1px solid var(--line); padding:6px 12px; border-radius:7px;}
+  .flow .arr{color:var(--vermilion);}
+  footer{margin-top:80px; padding-top:24px; border-top:1.5px solid var(--ink);
+    font-family:"Spline Sans Mono",monospace; font-size:12px; color:var(--ink-soft); line-height:1.7;}
+  .ref{display:block; margin:2px 0;}
+  @media(max-width:640px){ body{font-size:17px;} .wrap{padding:0 20px 80px;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="mast">
+  <div class="kicker">
+    <svg width="22" height="22" viewBox="0 0 40 40" fill="none">
+      <path d="M20 4 C30 4 36 11 36 20 C36 29 30 36 20 36 C12 36 6 30 6 21" stroke="#B5432E" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+    <span>perpetuity · research dossier</span>
+    <span class="doc-no">02 / 03</span>
+  </div>
+  <h1>Turning it into a <em>passive</em> skill</h1>
+  <p class="standfirst">A skill cannot run while you sleep — it has no process and no clock. This is the design for getting Hermes-grade continuity anyway, by acting at boundaries instead of running a daemon.</p>
+  <div class="meta">
+    <span><b>Artefact</b> perpetuity · design v0.1</span>
+    <span><b>Sits beside</b> kanso suite</span>
+    <span><b>Standard</b> agentskills.io / SKILL.md</span>
+  </div>
+</header>
+
+<section id="constraint">
+  <h2><span class="n">§0</span> The constraint, stated plainly</h2>
+  <div class="lede-rule"></div>
+  <p>Before any design, the honest part. A Claude skill is <strong>not a program</strong>. It is a folder of Markdown instructions that gets loaded into context <em>during a conversation turn, when triggered</em>. It has no thread, no event loop, no ability to wake itself at 3am and consolidate notes. Document 01 showed that Hermes "learns in the background" only because it is an always-on runtime with disk and a clock. A skill has neither.</p>
+  <p>So the literal goal — "a skill that learns and creates its own library in the background" — has a false premise. If we built it naively, it would do precisely nothing between your messages. That is the questionable bit of the brief, and it deserves a straight answer rather than an enthusiastic yes.</p>
+  <div class="key">
+    <span class="lbl">The reframe that makes it real</span>
+    Redefine <strong>"passive"</strong> as <em>"zero extra effort from you,"</em> not <em>"runs while you're away."</em> A skill can be fully passive in the first sense: it can mandate that Claude <strong>recall</strong> from the library at the start of a task and <strong>capture</strong> to it at the end — automatically, without you ever asking. You do nothing; the learning still happens. It just happens <em>at the edges of your turns</em>, not in a vacuum.
+  </div>
+  <p>And recall §3 of Document 01: even Hermes' Curator is triggered by an <em>inactivity check at a boundary</em>, not a true daemon. We are imitating a boundary-triggered system. The gap between "what Hermes really does" and "what a skill can do" is smaller than it first looks.</p>
+</section>
+
+<section id="loop">
+  <h2><span class="n">§1</span> The two-beat loop</h2>
+  <div class="lede-rule"></div>
+  <p>Everything reduces to two behaviours the skill makes non-negotiable, plus a third that runs occasionally:</p>
+  <div class="flow">
+    <span class="step">task starts</span><span class="arr">→</span>
+    <span class="step">RECALL: search library, load matches</span><span class="arr">→</span>
+    <span class="step">…work…</span><span class="arr">→</span>
+    <span class="step">task ends</span><span class="arr">→</span>
+    <span class="step">CAPTURE: write/patch a note if it earned one</span>
+  </div>
+  <p style="text-align:center; font-family:'Spline Sans Mono',monospace; font-size:12px; color:var(--ink-soft);">— and, on an occasional boundary — CURATE: dedupe, age, consolidate —</p>
+  <p><strong>Recall</strong> is what makes the library worth having; <strong>capture</strong> is what fills it; <strong>curate</strong> is what stops it rotting (the load-bearing lesson from Document 01). Miss any one and the system fails in a predictable way: no recall = a write-only diary nobody reads; no capture = an empty shell; no curate = near-duplicate sludge that poisons recall.</p>
+</section>
+
+<section id="map">
+  <h2><span class="n">§2</span> Mapping Hermes onto a skill</h2>
+  <div class="lede-rule"></div>
+  <p>Each Hermes mechanism has a skill-world equivalent. Where the equivalent is weaker, the table says so.</p>
+  <table>
+    <thead><tr><th>Hermes (runtime)</th><th>perpetuity (skill)</th><th>Fidelity</th></tr></thead>
+    <tbody>
+      <tr><td><code>skill_manage</code> auto-authoring</td><td>A capture protocol in <code>SKILL.md</code>: Claude writes a Markdown note at task end</td><td>High — same SKILL.md target</td></tr>
+      <tr><td><code>session_search</code> (FTS5)</td><td><code>ripgrep</code>/grep over the notes dir, or Claude Code's own search at task start</td><td>High — same idea, no SQLite</td></tr>
+      <tr><td><code>MEMORY.md</code> hot layer</td><td>A bounded <code>INDEX.md</code> (name + trigger + tags + state) loaded first</td><td>High</td></tr>
+      <tr><td>Curator background fork</td><td>A consolidation pass, run on command or via a hook (see §3)</td><td>Medium — boundary-triggered, not idle-forked</td></tr>
+      <tr><td>Inactivity-triggered runs</td><td>Session-boundary / cron / CI triggers</td><td>Medium</td></tr>
+      <tr><td>Honcho user modelling</td><td><em>Out of scope v1.</em> Optionally a single <code>USER.md</code>-style profile note</td><td>Low — skip for now</td></tr>
+      <tr><td>Always-on daemon</td><td>None in pure-skill form — see Tier 3</td><td>None without extra infra</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="tiers">
+  <h2><span class="n">§3</span> Three tiers of "passive"</h2>
+  <div class="lede-rule"></div>
+  <p>How autonomous it gets depends on how much infrastructure you're willing to attach. Ship them in order — each is useful alone, and each is a clean upgrade of the last.</p>
+
+  <div class="tier t1">
+    <div class="head"><span class="badge">Tier 1 · ship first</span></div>
+    <h4>Pure skill — boundary behaviour only</h4>
+    <p class="sub">works everywhere · incl. this chat UI · zero infra</p>
+    <p>The <code>SKILL.md</code> instructs Claude to search the notes directory <em>before</em> starting any non-trivial task, and to write/patch a note <em>after</em> finishing one that meets the capture criteria (§4). No daemon, no hooks — it "wakes" only when you're already talking to Claude, which is the honest limit. But within a session it is genuinely automatic and it persists across sessions through the files on disk.</p>
+    <div class="flow">
+      <span class="step">SKILL.md trigger</span><span class="arr">→</span>
+      <span class="step">read INDEX.md</span><span class="arr">→</span>
+      <span class="step">grep matches</span><span class="arr">→</span>
+      <span class="step">work</span><span class="arr">→</span>
+      <span class="step">write note + update index</span>
+    </div>
+    <p><strong>Limit:</strong> capture depends on Claude remembering to run the protocol. Skills can under-trigger. Mitigate with a "pushy" description and an explicit end-of-task checklist in the body.</p>
+  </div>
+
+  <div class="tier t2">
+    <div class="head"><span class="badge">Tier 2 · the sweet spot</span></div>
+    <h4>Claude Code hooks — deterministic boundaries</h4>
+    <p class="sub">Blake's daily driver · near-background · still legible</p>
+    <p>This is the tier that earns the word "passive" honestly, and it's the one I'd point you at. Claude Code fires <strong>27+ lifecycle hook events</strong> (verified, v2.1.141+, May 2026) — and hooks fire on <em>system events, not model whim</em>, so execution is guaranteed in a way prompt instructions never are. The three that matter:</p>
+    <ul class="clean">
+      <li><strong><code>SessionStart</code></strong> — its stdout is injected as context Claude can see. Use it to auto-load the perpetuity index every session. That's <em>recall</em>, made deterministic.</li>
+      <li><strong><code>Stop</code></strong> (Claude finished a turn) — fire an <code>async: true</code> hook that distils the just-finished transcript into a capture candidate out-of-band. Async hooks (shipped Jan 2026) run in the background without blocking. That is as close to "background learning" as the platform allows.</li>
+      <li><strong><code>SessionEnd</code></strong> — run the consolidation/curate pass when you're done, the skill-world echo of Hermes' idle-triggered Curator.</li>
+    </ul>
+    <p>Prior art exists: <a href="https://docs.claude-mem.ai/hooks-architecture">claude-mem</a> already implements cross-session memory for Claude Code on exactly these five lifecycle hooks. Worth studying before building — it de-risks the whole tier.</p>
+    <div class="note">
+      <span class="lbl">Hook gotcha to design around</span>
+      A <code>Stop</code> hook that writes a file Claude then reacts to can create a loop. Keep the Stop hook <em>passive</em> — distil and write the note out-of-band (an <code>agent</code>/<code>prompt</code> handler or a headless call), don't feed it back into the live turn.
+    </div>
+  </div>
+
+  <div class="tier t3">
+    <div class="head"><span class="badge">Tier 3 · only if you mean it</span></div>
+    <h4>A real daemon — true always-on</h4>
+    <p class="sub">honest answer to "runs while I sleep"</p>
+    <p>If genuine unattended, wake-itself-up learning is the actual requirement, stop trying to make a skill do it. Two clean routes:</p>
+    <ul class="clean">
+      <li><strong>Headless loop:</strong> a cron job on a $5 VPS running <code>claude -p</code> over your repos/notes, doing the consolidation pass on a schedule. This <em>is</em> Hermes' Curator pattern, rebuilt on Claude.</li>
+      <li><strong>Fork Hermes itself.</strong> It's MIT-licensed and already model-agnostic — point it at an Anthropic endpoint and you inherit the entire loop (Curator, memory, FTS5, nudges) for free. Building a worse copy of an open-source thing you can just configure is the trap to avoid.</li>
+    </ul>
+    <div class="key">
+      <span class="lbl">Proposed alternative — read this twice</span>
+      If "true background" is non-negotiable, <strong>forking/configuring Hermes onto an Anthropic endpoint is almost certainly the better use of your time than building perpetuity as a daemon.</strong> Build perpetuity as a skill only if you value portability, legibility, and tight integration with the kanso workflow over autonomy. Those are different products — pick deliberately.
+    </div>
+  </div>
+</section>
+
+<section id="criteria">
+  <h2><span class="n">§4</span> When to capture (and when not to)</h2>
+  <div class="lede-rule"></div>
+  <p>Lifted directly from Hermes' triggers, because they're well-judged. Capture a note when:</p>
+  <ul class="clean">
+    <li>A <strong>non-trivial workflow</strong> took 5+ meaningful steps and worked.</li>
+    <li>You <strong>recovered from a non-obvious error or dead end</strong> — the working path is the gold.</li>
+    <li>You <strong>corrected Claude's approach</strong> — corrections are the highest-signal events.</li>
+    <li>You hit a <strong>tool, config, or environment quirk</strong> worth not rediscovering.</li>
+  </ul>
+  <p>Just as important, the skip-list — over-capture is the failure mode that creates sludge:</p>
+  <ul class="clean skip">
+    <li>Trivial or one-step tasks Claude handles cold.</li>
+    <li>Facts that are cheaper to re-derive or web-search than to store.</li>
+    <li>Session ephemera — temp paths, one-off debugging state.</li>
+    <li><strong>Secrets, keys, tokens</strong> — never. Scan on write, like Hermes does.</li>
+  </ul>
+</section>
+
+<section id="parallel">
+  <h2><span class="n">§5</span> Installing in parallel, without collision</h2>
+  <div class="lede-rule"></div>
+  <p>The "blanket upgrade alongside any other library" goal is the easy part, because the ecosystem already standardised. perpetuity is a single skill folder conforming to <a href="https://agentskills.io">agentskills.io</a> / <code>SKILL.md</code> — the same standard kanso, Hermes, and Claude all speak. It drops into the skills directory next to everything else; no orchestration layer needed.</p>
+  <p>The thing that prevents collision is keeping its <em>domain</em> distinct. State it in the skill description so triggers don't fight:</p>
+  <table>
+    <thead><tr><th>Skill</th><th>Governs</th><th>Acts on</th></tr></thead>
+    <tbody>
+      <tr><td><strong>kanso suite</strong></td><td><em>How</em> code is written, audited, committed — your taste, enforced</td><td>The diff in front of you</td></tr>
+      <tr><td><strong>perpetuity</strong></td><td><em>What</em> is remembered across sessions — continuity</td><td>The notes library on disk</td></tr>
+    </tbody>
+  </table>
+  <p>They compose rather than overlap: kanso shapes the work; perpetuity remembers how a hard piece of work got done so kanso doesn't re-solve it next month. Keep perpetuity's data in its own removable directory (<code>~/.claude/perpetuity/</code> for global, or a repo-local <code>.perpetuity/</code> for project-scoped memory) so the whole thing is additive and trivially uninstalled.</p>
+  <div class="note">
+    <span class="lbl">Provenance rule (steal from the Curator)</span>
+    Tag every perpetuity-authored note as agent-created and keep them in <em>their own</em> directory. The Curator's one sharp edge is that it can't tell a hand-authored skill from an agent-saved one. Don't inherit that bug — never let perpetuity's consolidation pass touch your kanso skills or anything you wrote by hand.
+  </div>
+</section>
+
+<section id="rails">
+  <h2><span class="n">§6</span> The safety rails are the product</h2>
+  <div class="lede-rule"></div>
+  <p>Document 01's verdict bears repeating as a build directive: capture is the easy 20%; the rails are the 80% that decide whether this helps or quietly harms. Non-negotiables for v1:</p>
+  <ul class="clean">
+    <li><strong>Never auto-delete.</strong> Worst case is archive to a recoverable folder. Mirror Hermes exactly.</li>
+    <li><strong>Decay.</strong> Track <code>last_used</code>; age unused notes <code>active → stale → archived</code> on a deterministic clock before any LLM review touches them.</li>
+    <li><strong>Confidence + supersedes.</strong> Every note carries a confidence and can point at a note it replaces — so a wrong lesson can be overridden, not silently re-applied. This is the antidote to entrenchment.</li>
+    <li><strong>Consolidation is mandatory.</strong> Without a dedupe pass you get near-duplicate sprawl. It's not a v2 nicety.</li>
+    <li><strong>Bounded index.</strong> Only the small <code>INDEX.md</code> is ever always-loaded; full notes load on match. Progressive disclosure, or context bloat eats the savings.</li>
+    <li><strong>Pin + snapshot.</strong> Let yourself fence off a note; snapshot the library before any mutating pass.</li>
+  </ul>
+</section>
+
+<section id="scope">
+  <h2><span class="n">§7</span> Recommended v1 scope</h2>
+  <div class="lede-rule"></div>
+  <p>Don't build all three tiers at once. The pragmatic path:</p>
+  <ul class="clean">
+    <li><strong>v0.1</strong> — Tier 1 pure skill: capture + recall at turn boundaries, manual <code>/perpetuity-curate</code>. Works in this chat and in Claude Code today. Prove the note schema (Document 03) and the recall actually helps before automating anything.</li>
+    <li><strong>v0.2</strong> — Add the Tier 2 Claude Code hooks: <code>SessionStart</code> recall injection, async <code>Stop</code> capture, <code>SessionEnd</code> curate. Now it's passive in the strong sense, on your daily driver.</li>
+    <li><strong>v0.3+</strong> — Only if you still want true autonomy, evaluate Tier 3 honestly against just running Hermes. Don't build a daemon out of pride.</li>
+  </ul>
+  <div class="key">
+    <span class="lbl">Bottom line</span>
+    Yes, build perpetuity — but as a <strong>boundary-triggered continuity skill</strong>, not a background daemon. The skill form buys you portability, legibility, and seamless coexistence with kanso. If the daemon dream wins, configure Hermes instead. Either way, the maintenance and safety machinery — not the capture trick — is where the real work lives.
+  </div>
+</section>
+
+<footer>
+  <span class="ref">— Sources (paraphrased; no verbatim reproduction):</span>
+  <span class="ref">· code.claude.com/docs — Hooks reference (SessionStart, Stop, SessionEnd; async hooks)</span>
+  <span class="ref">· hermes-agent.nousresearch.com/docs — Skills, Curator, Memory</span>
+  <span class="ref">· agentskills.io · docs.claude-mem.ai — hooks-based memory prior art</span>
+  <span class="ref" style="margin-top:10px;">perpetuity dossier · 02 of 03 · compiled for Blake · 01 Jun 2026</span>
+</footer>
+
+</div>
+</body>
+</html>
