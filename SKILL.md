@@ -1,12 +1,13 @@
 ---
 name: perpetuity
 description: >-
-  Cross-session memory of how hard problems got solved. Use when recalling past
-  work: "have we solved this before", "what did we decide about X", "did we hit
-  this error already", "remember how we fixed Y". Recalls relevant notes when a
-  non-trivial task starts and captures a note when one ends. It governs what
-  gets remembered across sessions. It stays out of how code is written, so it
-  never competes with the kanso skills for code-writing triggers.
+  A note library that remembers how hard problems got solved, so the next
+  session does not re-derive them. Recall runs when a non-trivial task starts:
+  it reads a bounded index, then greps notes for the task tools, errors and
+  domain terms. Capture writes one note when the task ends. Use when prior work
+  would help: "have we solved this before", "what did we decide about X", "did
+  we hit this error already", "remember how we fixed Y". It stays out of how
+  code is written, so it never competes with code-writing skills for triggers.
 ---
 
 # perpetuity
