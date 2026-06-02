@@ -1,23 +1,37 @@
 # perpetuity
 
-Claude forgets everything between sessions. perpetuity keeps the part worth keeping: how you solved the hard stuff. It's one small skill on the [agentskills.io](https://agentskills.io) standard, sitting beside your other skills without fighting them for attention. Its job is memory, and it stays well out of how your code gets written.
+> Cross-session memory for Claude. It records how you solved a hard problem and pulls it back the next time you hit one.
 
-Passive means something precise here: no clock, no background thread, nothing running while you sleep. A skill cannot do those things, so perpetuity works at the seams of a conversation instead. When a task begins, it searches its notes and loads only what matches. When the task ends, it writes one note back, and only if the task earned it. The third move, curate, you run by hand to stop the library turning to sludge. Recall, capture, curate: that is the whole of it.
+Claude forgets everything between sessions. perpetuity keeps the part worth keeping: how the hard problems got solved. It is one small skill on the [agentskills.io](https://agentskills.io) standard, and it sits beside your other skills without competing for attention. Its job is memory. It stays out of how your code gets written.
+
+It runs at the seams of a conversation, not on a clock. No daemon, no background thread, nothing running while you sleep, because a skill cannot do those things. So perpetuity acts at the two edges of a task: it recalls when a task starts, and it captures when the task ends.
 
 ## The loop
 
+```mermaid
+flowchart LR
+  S([task starts]) --> R["recall<br/>read INDEX.md, grep notes, load matches"]
+  R --> W([work])
+  W --> E([task ends])
+  E --> C["capture<br/>write one note, if earned"]
+  C -. run by hand .-> U["curate<br/>dedupe, age, consolidate"]
 ```
-task starts → RECALL (search notes, load matches) → …work… → task ends → CAPTURE (write one note, if earned)
-                                  (and, on command) CURATE → dedupe, age, consolidate
-```
 
-Three moves, and each one fails in its own way if you drop it.
+## The three moves
 
-**Recall** reads the small `INDEX.md`, greps `notes/` for anything tagged to the task in front of you, and pulls in only what matches. The index is always loaded. Full notes are not, so the whole thing stays cheap. Skip recall and you've built a diary nobody opens.
+Each one fails in its own way if you drop it.
 
-**Capture** saves a single note when a task ends, but only when the task earned one: a workflow that ran five or more steps and worked, a dead end you clawed your way back from, a correction you had to make, a config quirk you'd rather not trip over again. Nothing happened worth keeping? It writes nothing. Over-saving is exactly how a memory library turns to sludge.
+| Move | Fires | What it does | Drop it and... |
+|---|---|---|---|
+| **Recall** | a non-trivial task starts | reads the small `INDEX.md`, greps `notes/` for tags and terms matching the task, loads only what matches | you have a diary nobody opens |
+| **Capture** | the task ends | writes a single note, and only if the task earned one | the library stays empty |
+| **Curate** | you run `/perpetuity-curate` | snapshots the library, ages notes from active to stale to archived, folds overlapping ones together | recall rots into near-duplicate sludge |
 
-**Curate** is the one move you trigger by hand, with `/perpetuity-curate`. It snapshots the library first, ages notes from active to stale to archived on a fixed clock, then folds overlapping ones together. It never deletes. Worst case, a note moves to `.archive/` and waits there.
+`INDEX.md` is always loaded; full notes are not, so recall stays cheap.
+
+**What earns a note.** A task clears the capture bar when it is worth not re-deriving: a workflow that ran five or more steps and worked, a dead end you backed out of, a correction you had to make, a config quirk you would rather not hit twice. If nothing worth keeping happened, capture writes nothing. Over-saving is how a memory library turns to sludge.
+
+Curate never deletes. Worst case, a note moves to `.archive/` and waits. It leaves pinned notes where they are, never touches a note you wrote by hand, and never reaches outside its own directory.
 
 ## Install
 
@@ -25,25 +39,32 @@ Three moves, and each one fails in its own way if you drop it.
 git clone https://github.com/blakecyze/perpetuity ~/.claude/skills/perpetuity
 ```
 
-The notes themselves live apart from the skill. Global memory goes in `~/.claude/perpetuity/`. Project memory goes in a `.perpetuity/` folder inside the repo it belongs to. Delete those two directories and the skill folder, and perpetuity is gone. No traces, no leftover config.
+The notes live apart from the skill, so uninstalling is just deleting directories:
 
-## What's in here
+| Scope | Lives in |
+|---|---|
+| Global memory | `~/.claude/perpetuity/` |
+| Project memory | `.perpetuity/` inside the repo it belongs to |
+
+Delete those two directories and the skill folder and perpetuity is gone. No traces, no leftover config.
+
+## What is in here
 
 | File | Purpose |
-|------|---------|
-| `SKILL.md` | The whole protocol: recall, capture, curate, the capture bar, the schema. |
-| `notes/_example.md` | One filled-in note that shows the schema. |
-| `INDEX.md` | The bounded index that's always loaded. Built from note frontmatter. |
-| `reindex.py` | A 30-odd-line script, stdlib only, that rebuilds `INDEX.md`. |
-| `docs/` | The design dossier, and the reasoning behind every choice here. |
+|---|---|
+| `SKILL.md` | the whole protocol: recall, capture, curate, the capture bar, the schema |
+| `notes/_example.md` | one filled-in note that shows the schema |
+| `INDEX.md` | the bounded index that is always loaded, built from note frontmatter |
+| `reindex.py` | a 30-line, stdlib-only script that rebuilds `INDEX.md` |
+| `docs/` | the design dossier, and the reasoning behind each choice |
 
-## Where it's at
+## Status
 
-This is v0.1, the pure-skill version. It runs anywhere Claude does, the chat UI included. Recall and capture fire on their own inside a session. Curate waits for you to ask. There are no lifecycle hooks and no daemon yet. Both are on the roadmap, and `docs/` walks through why the design stops where it does for now.
+This is v0.1, the pure-skill version. It runs anywhere Claude does, the chat UI included. Recall and capture fire on their own inside a session; curate waits for you to ask. There are no lifecycle hooks and no daemon yet. Both are on the roadmap, and `docs/` walks through why the design stops here for now.
 
 ## Safety
 
-perpetuity never deletes on its own. Every note carries how far to trust it, what it replaces, where it came from, its current state, and the date it last proved useful. Curate respects all of that. It leaves pinned notes where they are, never touches a note you wrote by hand, and never reaches outside its own directory.
+perpetuity never deletes on its own. Every note records how far to trust it, what it replaces, where it came from, its current state, and the date it last proved useful. Curate respects all of it.
 
 ## Licence
 
