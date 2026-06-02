@@ -58,10 +58,6 @@ Delete those two directories and the skill folder and perpetuity is gone. No tra
 | `reindex.py` | a 30-line, stdlib-only script that rebuilds `INDEX.md` |
 | `docs/` | the design dossier, and the reasoning behind each choice |
 
-## Status
-
-This is v0.1, the pure-skill version. It runs anywhere Claude does, the chat UI included. Recall and capture fire on their own inside a session; curate waits for you to ask. There are no lifecycle hooks and no daemon yet. Both are on the roadmap, and `docs/` walks through why the design stops here for now.
-
 ## Safety
 
 perpetuity never deletes on its own. Every note records how far to trust it, what it replaces, where it came from, its current state, and the date it last proved useful. Curate respects all of it.
