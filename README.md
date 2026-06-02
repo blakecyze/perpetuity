@@ -30,7 +30,7 @@ task starts → RECALL (search notes, load matches) → …work… → task ends
 ## Install
 
 ```sh
-git clone https://github.com/blaketime/perpetuity ~/.claude/skills/perpetuity
+git clone https://github.com/blakecyze/perpetuity ~/.claude/skills/perpetuity
 ```
 
 The notes themselves live in their own directory — `~/.claude/perpetuity/`
